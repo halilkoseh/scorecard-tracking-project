@@ -13,10 +13,19 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             // Başarılı giriş
-            return redirect()->intended('/welcome');
+            $user = Auth::user();
+            return redirect()->intended('/welcome')->with('user', $user->name);
         }
 
         // Başarısız giriş
         return back()->with('error', 'Kullanıcı adı veya şifre hatalı.');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login.index');
     }
 }
